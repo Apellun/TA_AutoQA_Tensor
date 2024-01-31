@@ -1,0 +1,8 @@
+SBIS_URL = "https://sbis.ru/"
+TENSOR_ABOUT_PAGE_URL = "https://tensor.ru/about"
+YAROSLAVSKAYA_OBL_REGION_TITLE = "Ярославская обл."
+YAROSLAVSKAYA_OBL_CONTACTS_TITLE = "Ярославль"
+KAMCHATSKIY_KRAI_REGION_TITLE = "Камчатский край"
+KAMCHATSKIY_KRAI_CONTACTS_URL_PART = "41-kamchatskij-kraj"
+KAMCHATSKIY_KRAI_CONTACTS_TITLE = "Петропавловск-Камчатский"
+MOSKVA_CONTACTS_TITLE = "г. Москва"

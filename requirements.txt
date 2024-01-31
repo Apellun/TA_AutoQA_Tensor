@@ -1,0 +1,5 @@
+allure-pytest==2.13.2
+pylenium==1.0
+pyleniumio==1.20.0
+pytest==7.4.3
+selenium==4.17.2
