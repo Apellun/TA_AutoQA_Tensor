@@ -23,6 +23,7 @@ import json
 import logging
 import shutil
 from pathlib import Path
+import os
 
 import allure
 import pytest
@@ -57,34 +58,14 @@ def project_root() -> Path:
 
 @pytest.fixture(scope="session", autouse=True)
 def test_results_dir(project_root: Path, request) -> Path:
-    # """Creates the `/test_results` directory to store the results of the Test Run.
+    """Creates the `/logs` directory to store the results of the Test Run.
 
-    # Returns:
-    #     The `/test_results` directory as a filepath (str).
-    # """
-    # session = request.node
-    # test_results_dir = project_root.joinpath("test_results")
+    Returns:
+        The `/test_results` directory as a filepath (str).
+    """
+    test_results_dir = project_root.joinpath("AutoQA_Tensor/logs")
 
-    # if test_results_dir.exists():
-    #     # delete /test_results from previous Test Run
-    #     shutil.rmtree(test_results_dir, ignore_errors=True)
-
-    # try:
-    #     # race condition can occur between checking file existence and
-    #     # creating the file when using pytest with multiple workers
-    #     test_results_dir.mkdir(parents=True, exist_ok=True)
-    # except FileExistsError:
-    #     pass
-
-    # for test in session.items:
-    #     try:
-    #         # make the test_result directory for each test
-    #         test_results_dir.joinpath(test.name).mkdir(parents=True, exist_ok=True)
-    #     except FileExistsError:
-    #         pass
-
-    # return test_results_dir
-    return project_root.joinpath("test_results")
+    return project_root.joinpath("logs")
 
 
 @pytest.fixture(scope="session")
@@ -227,19 +208,10 @@ def test_case(test_results_dir: Path, request) -> TestCase:
 
 
 @pytest.fixture(scope="function")
-def py(test_case: TestCase, py_config: PyleniumConfig, request):
-    """Initialize a Pylenium driver for each test.
-
-    Pass in this `py` fixture into the test function.
-
-    Examples:
-        def test_go_to_google(py):
-            py.visit('https://google.com')
-            assert 'Google' in py.title()
-    """
-    py = Pylenium(py_config)
-    
+def configure_logging(request):
+    """Fixture to configure logging."""
     test_name = request.node.name
+    
     log_format = "%(asctime)s %(levelname)-8s %(name)-8s %(message)s"
     date_format = "%Y-%m-%d %H:%M:%S"
     formatter = logging.Formatter(log_format, datefmt=date_format)
@@ -253,11 +225,32 @@ def py(test_case: TestCase, py_config: PyleniumConfig, request):
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    file_handler = logging.FileHandler(f"logs/{test_name}.log", mode="a")
+    logs_directory = "AutoQA_Tensor/logs"
+    os.makedirs(logs_directory, exist_ok=True)
+
+    log_file_path = os.path.join(logs_directory, f"{test_name}.log")
+    file_handler = logging.FileHandler(log_file_path, mode="a")
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
-    logger.setLevel(logging.INFO)
+    py_logger = logging.getLogger("py")
+    py_logger.addHandler(logging.StreamHandler())
+    py_logger.addHandler(file_handler)
+    py_logger.setLevel(logging.INFO)
+    
+    
+@pytest.fixture(scope="function")
+def py(request, configure_logging, test_case: TestCase, py_config: PyleniumConfig):
+    """Initialize a Pylenium driver for each test.
+
+    Pass in this `py` fixture into the test function.
+
+    Examples:
+        def test_go_to_google(py):
+            py.visit('https://google.com')
+            assert 'Google' in py.title()
+    """
+    py = Pylenium(py_config)
     
     yield py
     
@@ -272,7 +265,7 @@ def py(test_case: TestCase, py_config: PyleniumConfig, request):
             # if the test passed, execute code in this block
             pass
         else:
-            # if the test has another result (ie skipped, inconclusive), execute code in this block
+            # if the test has another result (i.e., skipped, inconclusive), execute code in this block
             pass
     except Exception:
         logging.error("Failed to take screenshot on test failure.")
