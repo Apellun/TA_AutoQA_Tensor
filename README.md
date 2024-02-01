@@ -1,12 +1,12 @@
 ### Запуск
 
-``pytest``
-Или:
+``pytest`` <br>
+Или: <br>
 ``pytest --alluredir=allure-report``
 
 ### Логи
 
-Директория /logs
-Или:
-``pylenium allure serve`` 
+Директория /logs <br>
+Или: <br>
+``pylenium allure serve`` <br>
 (после запуска тестов с флагом ``--alluredir=allure-report`` из директории запуска )
