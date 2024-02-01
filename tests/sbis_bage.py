@@ -33,7 +33,7 @@ class SbiSPage(BasePage):
         region_element = self.by_xpath_get_element(SbisLocators.LOCATOR_SBIS_CONTACTS_REGION, "Регион")
         return self.element_has_text(region_element, expected_region, "Регион")
         
-    def contacts_check_region_title(self, expected_title: str) -> bool:
+    def contacts_check_partners_region_title(self, expected_title: str) -> bool:
         """
         Проверяет что заголовок блока "Партнеры" на странице "Контакты" соответствует
         переданной строке.
@@ -62,7 +62,7 @@ class SbiSPage(BasePage):
         """
         return self.by_xpath_element_exists(TensorLocators.LOCATOR_ABOUT_POWER_IN_PEOPLE_BLOCK, "Сила в людях")
         
-    def go_to_tensor_about_power_in_people_block_link(self) -> None:
+    def follow_tensor_about_power_in_people_block_link(self) -> None:
         """
         Переходит по ссылке "Подробнее" в блоке "Сила в людях" на сайте Тензор.
         """

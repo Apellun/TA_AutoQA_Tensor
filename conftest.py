@@ -237,7 +237,10 @@ def configure_logging(request):
     logger.addHandler(console_handler)
 
     logs_directory = Path(__file__).resolve().parent.joinpath("logs")
-    os.mkdir(logs_directory)
+    try:
+        os.mkdir(logs_directory)
+    except FileExistsError:
+        pass
 
     log_file_path = os.path.join(logs_directory, f"{test_name}.log")
     file_handler = logging.FileHandler(log_file_path, mode="a")

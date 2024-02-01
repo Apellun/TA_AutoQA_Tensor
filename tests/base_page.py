@@ -20,7 +20,7 @@ class BasePage:
             
     def switch_to_next_tab(self) -> None:
         """
-        Переходит на последнюю открытую вкладку.
+        Переключается на последнюю открытую вкладку.
         """
         self.py.log.this((f"Переход на новую вкладку"))
         try:
@@ -31,7 +31,7 @@ class BasePage:
             
     def get_current_url(self) -> str:
         """
-        Проверяет url открытой страницы на соответствие переданной строке.
+        Возвращает url текущей страницы.
         """
         self.py.log.this((f"Получение текущего url"))
         try:
@@ -40,6 +40,18 @@ class BasePage:
             return url
         except Exception as e:
             self.py.log.this((f"Ошибка получения текущего url: {e}"))
+            
+    def get_page_title(self) -> str:
+        """
+        Возвращает title текущей страницы.
+        """
+        self.py.log.this(f"Получение заголовка текущей страницы")
+        try:
+            title = self.py.title()
+            self.py.log.this(f"Заголовок текущей страницы: {title}")
+            return title
+        except Exception as e:
+            self.py.log.this(f"Ошибка получения заголовка текущей страницы: {e}")
             
     def click_element(self, element: Element, element_name: str = "(название не указано)") -> None:
         """
