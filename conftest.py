@@ -63,9 +63,20 @@ def test_results_dir(project_root: Path, request) -> Path:
     Returns:
         The `/test_results` directory as a filepath (str).
     """
-    test_results_dir = project_root.joinpath("AutoQA_Tensor/logs")
+    test_results_dir = project_root.joinpath("/logs_")
+    
+    # if test_results_dir.exists():
+    #     # delete /test_results from previous Test Run
+    #     shutil.rmtree(test_results_dir, ignore_errors=True)
 
-    return project_root.joinpath("logs")
+    # try:
+    #     # race condition can occur between checking file existence and
+    #     # creating the file when using pytest with multiple workers
+    #     test_results_dir.mkdir(parents=True, exist_ok=True)
+    # except FileExistsError:
+    #     pass
+    
+    return test_results_dir
 
 
 @pytest.fixture(scope="session")
@@ -225,8 +236,8 @@ def configure_logging(request):
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    logs_directory = "AutoQA_Tensor/logs"
-    os.makedirs(logs_directory, exist_ok=True)
+    logs_directory = Path(__file__).resolve().parent.joinpath("logs")
+    os.mkdir(logs_directory)
 
     log_file_path = os.path.join(logs_directory, f"{test_name}.log")
     file_handler = logging.FileHandler(log_file_path, mode="a")
